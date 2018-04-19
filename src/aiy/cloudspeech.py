@@ -109,6 +109,12 @@ class _CloudSpeechRecognizer(object):
         self._recorder.remove_processor(self._request)
 
 
+def kill_recognizer():
+    global _cloudspeech_recognizer
+    del _cloudspeech_recognizer
+    _cloudspeech_recognizer = None
+    print ('Cloud speech recognizer: ', _cloudspeech_recognizer)
+
 def get_recognizer():
     """Returns a recognizer that uses Google CloudSpeech APIs.
 
@@ -126,5 +132,6 @@ def get_recognizer():
     """
     global _cloudspeech_recognizer
     if not _cloudspeech_recognizer:
+        print ('Creating new cloudspeech recognizer')
         _cloudspeech_recognizer = _CloudSpeechRecognizer(CLOUDSPEECH_CREDENTIALS_FILE)
     return _cloudspeech_recognizer

@@ -180,6 +180,7 @@ class GenericSpeechRequest(object):
         yield self._create_config_request()
 
         while True:
+            # print ('Getting data from request stream...')
             data = self._audio_queue.get()
 
             if not data:
@@ -215,22 +216,34 @@ class GenericSpeechRequest(object):
         return
 
     def _end_audio_request(self):
+        print ('Attempting to end audio request...')
         self.end_audio()
         if self._endpointer_cb:
             self._endpointer_cb()
+        print ('Done ending audio request')
 
     def _handle_response_stream(self, response_stream):
+        print ('Attempting to handle response stream...')
+        print (response_stream)
+
         for resp in response_stream:
+            print ('New resp iteration...', resp)
             if resp.error.code != error_code.OK:
+                print('Attempting to end audio request...')
                 self._end_audio_request()
                 raise Error('Server error: ' + resp.error.message)
 
+            print('Attempting to stop sending audio...')
             if self._stop_sending_audio(resp):
+                print('Attempting to end audio request...')
                 self._end_audio_request()
 
+
+            print ('Attempting to handle response...')
             self._handle_response(resp)
 
         # Server has closed the connection
+        print ('About to finish the response stream')
         return self._finish_request() or ''
 
     def _start_logging_request(self):
@@ -251,7 +264,7 @@ class GenericSpeechRequest(object):
 
         if self._request_log_wav:
             self._request_log_wav.close()
-
+        print ('Finished request')
         return _Result(None, None)
 
     def do_request(self):
@@ -267,14 +280,17 @@ class GenericSpeechRequest(object):
         Raises speech.Error on error.
         """
         try:
+            print('Attempting to make speech service...')
             service = self._make_service(self._channel_factory.make_channel())
 
             response_stream = self._create_response_stream(
                 service, self._request_stream(), self.DEADLINE_SECS)
 
             if self._audio_logging_enabled:
+                print('Starting audio logging...')
                 self._start_logging_request()
 
+            print('Done with speech service.')
             return self._handle_response_stream(response_stream)
         except (
                 google.auth.exceptions.GoogleAuthError,

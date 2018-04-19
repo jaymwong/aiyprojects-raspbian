@@ -73,6 +73,12 @@ def get_player():
     return _voicehat_player
 
 
+def kill_recorder():
+    global _voicehat_recorder
+    del _voicehat_recorder
+    _voicehat_recorder = None 
+    print ('Audio recorder: ', _voicehat_recorder)
+
 def get_recorder():
     """Returns a driver to control the VoiceHat microphones.
 
@@ -81,6 +87,7 @@ def get_recorder():
     """
     global _voicehat_recorder
     if not _voicehat_recorder:
+        print ('Creating new voicehat recorder')
         _voicehat_recorder = aiy._drivers._recorder.Recorder()
     return _voicehat_recorder
 
