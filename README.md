@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <img src="https://aiyprojects.withgoogle.com/static/images/icons/aiy-circular-logo.svg" width="40%">
 
 This repository contains an easy-to-use API for the AIY Vision Kit and
@@ -40,3 +41,9 @@ in the dev terminal:
 rm -r env
 ./scripts/install-deps.sh
 ```
+=======
+The `master` branch of google/aiyprojects-raspbian is deprecated.
+It contains code that was released with the initial release of the Voice Kit, implementing a voice recognizer with various different voice commands implemented in src/actions.py.
+
+It has been replaced by the [aiyprojects branch](https://github.com/google/aiyprojects-raspbian/tree/aiyprojects), which has an easy-to-use API with simple examples that you can build upon.
+>>>>>>> 372fadc50a1eb3445fe27896dd2fabf38d1210d3
