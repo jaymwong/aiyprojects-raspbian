@@ -84,7 +84,7 @@ class _ChannelFactory(object):
             self._checked = True
 
         return google.auth.transport.grpc.secure_authorized_channel(
-            self._credentials, request, target)
+            self._credentials, request, target, options=[('grpc.min_reconnect_backoff_ms', 100)]) 
 
 
 class GenericSpeechRequest(object):
@@ -94,7 +94,7 @@ class GenericSpeechRequest(object):
     # TODO(rodrigoq): Refactor audio logging.
     # pylint: disable=attribute-defined-outside-init,too-many-instance-attributes
 
-    DEADLINE_SECS = 185
+    DEADLINE_SECS = 5
 
     def __init__(self, api_host, credentials):
         self.dialog_follow_on = False
@@ -231,7 +231,8 @@ class GenericSpeechRequest(object):
             if resp.error.code != error_code.OK:
                 print('Attempting to end audio request...')
                 self._end_audio_request()
-                raise Error('Server error: ' + resp.error.message)
+                #raise Error('Server error: ' + resp.error.message)
+                return self._finish_request() or ''
 
             print('Attempting to stop sending audio...')
             if self._stop_sending_audio(resp):
@@ -284,7 +285,7 @@ class GenericSpeechRequest(object):
             service = self._make_service(self._channel_factory.make_channel())
 
             response_stream = self._create_response_stream(
-                service, self._request_stream(), self.DEADLINE_SECS)
+                    service, self._request_stream(), 1 )
 
             if self._audio_logging_enabled:
                 print('Starting audio logging...')
